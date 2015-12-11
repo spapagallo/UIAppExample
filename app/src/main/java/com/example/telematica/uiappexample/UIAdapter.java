@@ -6,11 +6,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.telematica.uiappexample.models.Libro;
+
+import java.util.List;
+
 /**
  * Created by franciscocabezas on 11/20/15.
  */
 public class UIAdapter extends RecyclerView.Adapter<UIAdapter.ViewHolder> {
-    private String[] mDataset;
+    private List<Libro> mDataset;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView mTextView;
@@ -20,7 +24,7 @@ public class UIAdapter extends RecyclerView.Adapter<UIAdapter.ViewHolder> {
         }
     }
 
-    public UIAdapter(String[] myDataset) {
+    public UIAdapter(List<Libro> myDataset) {
         mDataset = myDataset;
     }
 
@@ -34,11 +38,12 @@ public class UIAdapter extends RecyclerView.Adapter<UIAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.mTextView.setText(mDataset[position]);
+        Libro libro = mDataset.get(position);
+        holder.mTextView.setText(libro.getNombre());
     }
 
     @Override
     public int getItemCount() {
-        return mDataset.length;
+        return mDataset.size();
     }
 }

@@ -7,10 +7,16 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.example.telematica.uiappexample.connection.HttpServerConnection;
+import com.example.telematica.uiappexample.models.Libro;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-
-    private String[] myStringArray = new String[]{"HOLA","MUNDO","SOY", "UNA", "LISTA"};
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -31,10 +37,6 @@ public class MainActivity extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        // specify an adapter (see also next example)
-        mAdapter = new UIAdapter(myStringArray);
-        mRecyclerView.setAdapter(mAdapter);
-
         AsyncTask<Void, Void, String> task = new AsyncTask<Void, Void, String>() {
 
             @Override
@@ -44,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             protected String doInBackground(Void... params) {
-                String resultado = new HttpServerConnection().connectToServer("http://www.mocky.io/v2/56621692100000c7498d9228", 15000);
+                String resultado = new HttpServerConnection().connectToServer("http://smartbike.hxl.cl/rest/libros/?format=json", 15000);
                 return resultado;
             }
 
@@ -52,10 +54,39 @@ public class MainActivity extends AppCompatActivity {
             protected void onPostExecute(String result) {
                 if(result != null){
                     System.out.println(result);
+
+                    // specify an adapter (see also next example)
+                    mAdapter = new UIAdapter(getLista(result));
+                    mRecyclerView.setAdapter(mAdapter);
                 }
             }
         };
 
         task.execute();
+    }
+
+    private List<Libro> getLista(String result){
+        List<Libro> listaLibros = new ArrayList<Libro>();
+        try {
+            JSONArray lista = new JSONArray(result);
+
+            int size = lista.length();
+            for(int i = 0; i < size; i++){
+                Libro libro = new Libro();
+                JSONObject objeto = lista.getJSONObject(i);
+
+                libro.setId(objeto.getInt("id"));
+                libro.setNombre(objeto.getString("nombre"));
+                libro.setEditorial(objeto.getString("editorial"));
+                libro.setGenero(objeto.getString("genero"));
+                libro.setAutor(objeto.getInt("autor"));
+
+                listaLibros.add(libro);
+            }
+            return listaLibros;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return listaLibros;
+        }
     }
 }
