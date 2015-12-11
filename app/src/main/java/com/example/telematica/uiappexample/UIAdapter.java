@@ -18,9 +18,11 @@ public class UIAdapter extends RecyclerView.Adapter<UIAdapter.ViewHolder> {
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView mTextView;
+        public TextView mGeneroView;
         public ViewHolder(View v) {
             super(v);
             mTextView = (TextView) v.findViewById(R.id.textName);
+            mGeneroView = (TextView) v.findViewById(R.id.textGenero);
         }
     }
 
@@ -39,7 +41,9 @@ public class UIAdapter extends RecyclerView.Adapter<UIAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Libro libro = mDataset.get(position);
+
         holder.mTextView.setText(libro.getNombre());
+        holder.mGeneroView.setText(libro.getGenero());
     }
 
     @Override
