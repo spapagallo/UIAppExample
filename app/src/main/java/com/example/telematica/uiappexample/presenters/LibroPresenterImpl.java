@@ -1,13 +1,14 @@
-package com.example.telematica.uiappexample;
+package com.example.telematica.uiappexample.presenters;
 
+import android.app.Activity;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import com.example.telematica.uiappexample.connection.HttpServerConnection;
 import com.example.telematica.uiappexample.models.Libro;
+import com.example.telematica.uiappexample.models.connection.HttpServerConnection;
+import com.example.telematica.uiappexample.presenters.contract.LibroPresenter;
+import com.example.telematica.uiappexample.views.LibrosView;
+import com.example.telematica.uiappexample.views.UIAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,27 +17,25 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+/**
+ * Created by SG on 15-01-2016.
+ */
+public class LibroPresenterImpl implements LibroPresenter {
 
-    private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
+    Activity mContext;
+    LibrosView mLibroView;
+    RecyclerView.Adapter mAdapter;
+    RecyclerView mRecyclerView;
+    RecyclerView.LayoutManager mLayoutManager;
+
+    public LibroPresenterImpl(Activity context, RecyclerView.LayoutManager layoutManager, LibrosView libroView){
+        mContext = context;
+        mLibroView = libroView;
+        mLayoutManager = layoutManager;
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
-        mRecyclerView.setHasFixedSize(true);
-
-        // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-
+    public RecyclerView setDatos(){
         AsyncTask<Void, Void, String> task = new AsyncTask<Void, Void, String>() {
 
             @Override
@@ -63,9 +62,11 @@ public class MainActivity extends AppCompatActivity {
         };
 
         task.execute();
+        return mRecyclerView;
     }
 
-    private List<Libro> getLista(String result){
+    @Override
+    public List<Libro> getLista(String result){
         List<Libro> listaLibros = new ArrayList<Libro>();
         try {
             JSONArray lista = new JSONArray(result);
